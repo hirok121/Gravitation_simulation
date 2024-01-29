@@ -32,7 +32,7 @@ class Planet:
         win.blit(PLANET, (self.x - PLANET_SIZE, self.y - PLANET_SIZE))
 
 class Spacecraft:
-    def __init__(self, x, y, vel_x, vel_y, mass):
+    def __init__(self, x, y,vel_x,vel_y, mass):
         self.x = x
         self.y = y
         self.vel_x = vel_x
@@ -58,6 +58,14 @@ class Spacecraft:
     def draw(self):
         pygame.draw.circle(win, RED, (int(self.x), int(self.y)), OBJ_SIZE)
 
+    def shoot(self, mouse):
+        m_x, m_y = mouse
+        self.vel_x = (m_x - self.x) / VEL_SCALE
+        self.vel_y = (m_y - self.y) / VEL_SCALE
+
+    def __str__(self) -> str:
+        return f"Spacecraft at ({self.x}, {self.y}) with velocity ({self.vel_x}, {self.vel_y})"
+
 def create_ship(location, mouse):
     t_x, t_y = location
     m_x, m_y = mouse
@@ -82,13 +90,13 @@ def main():
             if event.type == pygame.QUIT:
                 running = False
             
+            # Drag and shoot mechanic
             if event.type == pygame.MOUSEBUTTONDOWN:
-                if temp_obj_pos:
-                    obj = create_ship(temp_obj_pos, mouse_pos)
-                    objects.append(obj)
-                    temp_obj_pos = None
-                else:
-                    temp_obj_pos = mouse_pos
+                temp_obj_pos = mouse_pos
+            elif event.type == pygame.MOUSEBUTTONUP:
+                obj = create_ship(temp_obj_pos, mouse_pos)
+                objects.append(obj)
+                temp_obj_pos = None
 
         win.blit(BG, (0, 0))
 
